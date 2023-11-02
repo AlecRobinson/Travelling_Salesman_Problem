@@ -2,6 +2,25 @@ import turtle
 import random
 import math
 
+#
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+
+df_cities = pd.read_csv('C:\Users\Alec\Desktop\Uni Work\CT5102-Python-Optimisation')
+df_cities.head()
+
+fig = plt.figure(figsize=(20,20))
+cmap, norm = from_levels_and_colors([0.0, 0.5, 1.5], ['red', 'black'])
+plt.scatter(df_cities['X'],df_cities['Y'],marker = '.',c=(df_cities.CityId != 0).astype(int), cmap='Set1', alpha = 0.6, s = 500*(df_cities.CityId == 0).astype(int)+1)
+plt.show()
+
+#
+
+
 number_cities = 20
 tabu_list = [100]
 
