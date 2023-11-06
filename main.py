@@ -10,38 +10,40 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-df_cities = pd.read_csv('C:\Users\Alec\Desktop\Uni Work\CT5102-Python-Optimisation')
+df_cities = pd.read_csv("C:/Users/Alec/Desktop/Uni Work/CT5102-Python-Optimisation/cities.csv")
 df_cities.head()
 
-fig = plt.figure(figsize=(20,20))
-cmap, norm = from_levels_and_colors([0.0, 0.5, 1.5], ['red', 'black'])
-plt.scatter(df_cities['X'],df_cities['Y'],marker = '.',c=(df_cities.CityId != 0).astype(int), cmap='Set1', alpha = 0.6, s = 500*(df_cities.CityId == 0).astype(int)+1)
-plt.show()
+citys_no_header = pd.read_csv("C:/Users/Alec/Desktop/Uni Work/CT5102-Python-Optimisation/cities.csv",  usecols=[1,2] ,header=None, skiprows=1)
+
+#fig = plt.figure(figsize=(20,20))
+#cmap, norm = from_levels_and_colors([0.0, 0.5, 1.5], ['red', 'black'])
+#plt.scatter(df_cities['X'],df_cities['Y'],marker = '.',c=(df_cities.CityId != 0).astype(int), cmap='Set1', alpha = 0.6, s = 500*(df_cities.CityId == 0).astype(int)+1)
+#plt.show()
 
 #
 
 
-number_cities = 20
+number_cities = len(df_cities)
+print(number_cities)
 tabu_list = [100]
 
 def main():
-    turtle.speed(5)
+    turtle.speed(15)
     random.seed(42)
     citylocations = []
+    #print(citys_no_header)
 
-    for i in range(0,number_cities):
-        citylocations.append(
-            (random.randint(-299, 299),
-            random.randint(-299, 299)))
+    for i in range(0,100):
+        citylocations.append((citys_no_header.iat[i,0], citys_no_header.iat[i,1]))
 
     screen = turtle.Screen()
     screen.setup(700,700)
-    dotCities(citylocations)
+    dotCities(citylocations[0:100])
 
-    tabu_iteration(citylocations)
+    #tabu_iteration(citylocations)
 
-    screen.exitonclick()
-
+    #screen.exitonclick()
+'''
 def tabu_iteration(citylocations):
     candidates = create_candidates(citylocations)
     best_score = 100000000
@@ -140,7 +142,7 @@ def create_candidates(citylocations):
         candidates.append(candidate)
 
     return candidates
-
+'''
 
 def drawpath(cities):
     turtle.clear()
@@ -158,7 +160,7 @@ def dotCities(cities):
 
     for city in cities:
         turtle.goto(city)
-        turtle.dot(8)
+        turtle.dot(80)
     
     turtle.goto(cities[0])
 
