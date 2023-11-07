@@ -6,14 +6,14 @@ import math
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import matplotlib.pyplot as plt
-import seaborn as sns
+#import matplotlib.pyplot as plt
+#import seaborn as sns
 import os
 
-df_cities = pd.read_csv("C:/Users/Alec/Desktop/Uni Work/CT5102-Python-Optimisation/cities.csv")
+df_cities = pd.read_csv("cities.csv")
 df_cities.head()
 
-citys_no_header = pd.read_csv("C:/Users/Alec/Desktop/Uni Work/CT5102-Python-Optimisation/cities.csv",  usecols=[1,2] ,header=None, skiprows=1)
+citys_no_header = pd.read_csv("cities.csv",  usecols=[1,2] ,header=None, skiprows=1)
 
 #fig = plt.figure(figsize=(20,20))
 #cmap, norm = from_levels_and_colors([0.0, 0.5, 1.5], ['red', 'black'])
@@ -24,24 +24,24 @@ citys_no_header = pd.read_csv("C:/Users/Alec/Desktop/Uni Work/CT5102-Python-Opti
 
 
 number_cities = len(df_cities)
-print(number_cities)
 tabu_list = [100]
 
 def main():
     turtle.speed(0) #Turns animation off so turtle can go as fast as possible
     random.seed(42)
     citylocations = []
-    #print(citys_no_header)
 
     for i in range(0,number_cities):
-        citylocations.append((float(citys_no_header.iat[i,0]) / 5.0 - 450, float(citys_no_header.iat[i,1]) / 5.0 - 350))
-        
+        citylocations.append((float(citys_no_header.iat[i,0]) / 5.0 - 450, float(citys_no_header.iat[i,1]) / 5.0 - 350))    #Manipulating the data to fit the screen
+
+    #Setting up the turtle screen    
     screen = turtle.Screen()
     screen.setup(width=1000,height=1000)
     screen.title('Traveling Santa')
+
     dotCities(citylocations)                #Draws out all cities
 
-    tabu_iteration(citylocations)
+    tabu_iteration(citylocations)           #Running the pathfinding method
 
     screen.exitonclick()
 
