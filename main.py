@@ -28,22 +28,23 @@ print(number_cities)
 tabu_list = [100]
 
 def main():
-    turtle.speed(15)
+    turtle.speed(0) #Turns animation off so turtle can go as fast as possible
     random.seed(42)
     citylocations = []
     #print(citys_no_header)
 
-    for i in range(0,100):
-        citylocations.append((citys_no_header.iat[i,0], citys_no_header.iat[i,1]))
-
+    for i in range(0,number_cities):
+        citylocations.append((float(citys_no_header.iat[i,0]) / 5.0 - 450, float(citys_no_header.iat[i,1]) / 5.0 - 350))
+        
     screen = turtle.Screen()
-    screen.setup(700,700)
-    dotCities(citylocations[0:100])
+    screen.setup(width=1000,height=1000)
+    screen.title('Traveling Santa')
+    dotCities(citylocations)                #Draws out all cities
 
-    #tabu_iteration(citylocations)
+    tabu_iteration(citylocations)
 
-    #screen.exitonclick()
-'''
+    screen.exitonclick()
+
 def tabu_iteration(citylocations):
     candidates = create_candidates(citylocations)
     best_score = 100000000
@@ -142,10 +143,9 @@ def create_candidates(citylocations):
         candidates.append(candidate)
 
     return candidates
-'''
+
 
 def drawpath(cities):
-    turtle.clear()
     turtle.penup()
 
     for city in cities:
@@ -159,9 +159,10 @@ def dotCities(cities):
     turtle.penup()
 
     for city in cities:
+        print(city)
         turtle.goto(city)
-        turtle.dot(80)
-    
+        turtle.dot(5)
+
     turtle.goto(cities[0])
 
 if __name__ == '__main__':
