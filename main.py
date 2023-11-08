@@ -2,30 +2,15 @@ import turtle
 import random
 import math
 import sys
-#
 
-import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-#import matplotlib.pyplot as plt
-#import seaborn as sns
-import os
 
-df_cities = pd.read_csv("cities.csv")
-df_cities.head()
-df_cities = df_cities.iloc[:500]
+df_cities = pd.read_csv("cities.csv",  usecols=[1,2] ,header=None, skiprows=1)
+sectionOfCities = df_cities.iloc[:500]
 
-citys_no_header = pd.read_csv("cities.csv",  usecols=[1,2] ,header=None, skiprows=1)
-sectionOfCities = citys_no_header.iloc[:500]
-
-#fig = plt.figure(figsize=(20,20))
-#cmap, norm = from_levels_and_colors([0.0, 0.5, 1.5], ['red', 'black'])
-#plt.scatter(df_cities['X'],df_cities['Y'],marker = '.',c=(df_cities.CityId != 0).astype(int), cmap='Set1', alpha = 0.6, s = 500*(df_cities.CityId == 0).astype(int)+1)
-#plt.show()
-
-#
 rng_seed = None
-number_iterations = 10
-number_cities = len(df_cities)
+number_iterations = 50
+number_cities = len(sectionOfCities)
 #tabu_length = 3
 #tabu_list = []
 
@@ -41,12 +26,12 @@ def main():
 
     for i in range(0,number_cities):
         print(sectionOfCities.iat[i,0])
-        citylocations.append((float(sectionOfCities.iat[i,0]), float(sectionOfCities.iat[i,1])))    #Manipulating the data to fit the screen(must remove before submition)
+        citylocations.append((float(sectionOfCities.iat[i,0]), float(sectionOfCities.iat[i,1])))   
 
     #Setting up the turtle screen
     screen = turtle.Screen()
     turtle.speed(0)     #Turns animation off so turtle can go as fast as possible
-    screen.setup(width=1000,height=1000)
+    screen.setup(width=1500,height=1000)
     screen.title('Traveling Santa')
 
     #dotCities(citylocations)                #Draws out all cities
@@ -255,7 +240,7 @@ def drawpath(cities):
     turtle.penup()
 
     for city in cities:
-        turtle.goto(city)
+        turtle.goto((x / 5 - 400) for x in city)        #Shrinks the vector so it can be visualised
         turtle.pendown()
 
     turtle.goto(cities[0])
@@ -275,7 +260,7 @@ def dotCities(cities):
 
 def drawdistance(cities):
     turtle.penup()
-    turtle.goto(-290, -285)
+    turtle.goto(0, +400)
     distance = objective_function(cities)
     turtle.write(f'Distance: {distance}', move=False,
                  align='left', font=('Arial', 8, 'normal'))
