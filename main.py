@@ -6,13 +6,14 @@ import sys
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
 df_cities = pd.read_csv("cities.csv",  usecols=[1,2] ,header=None, skiprows=1)
-sectionOfCities = df_cities.iloc[:500]
+sectionOfCities = df_cities.iloc[:5000]
 
 rng_seed = None
-number_iterations = 50
+number_iterations = 10
 number_cities = len(sectionOfCities)
-#tabu_length = 3
-#tabu_list = []
+tabu_length = 20
+tabu_list = []
+best_distance = 1000000000
 
 def main():
     
@@ -21,7 +22,8 @@ def main():
     get_arguments()
 
     # Could add a fixed seed for debugging
-    random.seed(rng_seed)
+    #random.seed(rng_seed)
+    rng_seed = 41
     citylocations = []
 
     for i in range(0,number_cities):
@@ -35,16 +37,15 @@ def main():
     screen.title('Traveling Santa')
 
     #dotCities(citylocations)                #Draws out all cities
-    #drawpath(citylocations)                #Draws out all cities connected
     
-    # Run 50 iteration of Gradient Descent search
+    # Run 50 iteration of Gradient Descent or TABU search
     for i in range(0, number_iterations):
-        citylocations = gd_iteration(citylocations)
-
-    #tabu_iteration(citylocations)           #Running the pathfinding method
+        #citylocations = gd_iteration(citylocations)
+        citylocations = tabu_iteration(citylocations)           #Running the pathfinding method
 
     screen.exitonclick()
 
+'''
 def get_arguments():
     global number_cities
     global number_iterations
@@ -90,13 +91,9 @@ def gd_iteration(citylocations):
     # Draw its path, and return it
     drawpath(best_candidate)
     return best_candidate
-
-
-
-
-
-
 '''
+
+
 def get_arguments():
     global number_cities
     global number_iterations
@@ -158,7 +155,7 @@ def tabu_iteration(citylocations):
             break
 
     # Draw's the current path using turtle
-    # drawpath(usable_candidate)
+    drawpath(usable_candidate)
 
     # Add current usable candidate to the tabu list
     tabu_list.append(usable_candidate)
@@ -180,15 +177,12 @@ def tabu_check(candidate):
 
     # Perform checks and set flag to false if needed
     for tabu_candidate in tabu_list:
-        if tabu_candidate == candidate and \
-            (objective_function(tabu_list[-1]) -
-             objective_function(tabu_candidate)) < 100:
+        if tabu_candidate == candidate and (objective_function(tabu_list[-1]) - objective_function(tabu_candidate)) < 100:
             usable = False
             break
 
     # Return the flag value
     return usable
-'''
 
 
 def objective_function(candidate):
@@ -243,7 +237,7 @@ def drawpath(cities):
         turtle.goto((x / 5 - 400) for x in city)        #Shrinks the vector so it can be visualised
         turtle.pendown()
 
-    turtle.goto(cities[0])
+    turtle.goto((x / 5 - 400) for x in cities[0])       #Shrinks the vector so it can be visualised
 
 '''
 def dotCities(cities):
@@ -259,10 +253,19 @@ def dotCities(cities):
 '''
 
 def drawdistance(cities):
+    global best_distance
+
     turtle.penup()
     turtle.goto(0, +400)
     distance = objective_function(cities)
     turtle.write(f'Distance: {distance}', move=False,
+                 align='left', font=('Arial', 8, 'normal'))
+    
+    turtle.penup()
+    turtle.goto(-400, +400)
+    if best_distance > distance:
+        best_distance = distance
+    turtle.write(f'Best Distance: {best_distance}', move=False,
                  align='left', font=('Arial', 8, 'normal'))
 
 if __name__ == '__main__':
