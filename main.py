@@ -14,10 +14,12 @@ number_cities = len(sectionOfCities)
 tabu_length = 20
 tabu_list = []
 best_distance = 1000000000
+distance = 0
 
 def main():
     
     global rng_seed
+    global distance
 
     get_arguments()
 
@@ -27,14 +29,14 @@ def main():
     citylocations = []
 
     for i in range(0,number_cities):
-        print(sectionOfCities.iat[i,0])
+        #print(sectionOfCities.iat[i,0])
         citylocations.append((float(sectionOfCities.iat[i,0]), float(sectionOfCities.iat[i,1])))   
 
     #Setting up the turtle screen
-    screen = turtle.Screen()
-    turtle.speed(0)     #Turns animation off so turtle can go as fast as possible
-    screen.setup(width=1500,height=1000)
-    screen.title('Traveling Santa')
+    #screen = turtle.Screen()
+    #turtle.speed(0)     #Turns animation off so turtle can go as fast as possible
+    #screen.setup(width=1500,height=1000)
+    #screen.title('Traveling Santa')
 
     #dotCities(citylocations)                #Draws out all cities
     
@@ -42,8 +44,9 @@ def main():
     for i in range(0, number_iterations):
         #citylocations = gd_iteration(citylocations)
         citylocations = tabu_iteration(citylocations)           #Running the pathfinding method
+        print(distance)
 
-    screen.exitonclick()
+    #screen.exitonclick()
 
 '''
 def get_arguments():
@@ -136,6 +139,7 @@ def tabu_iteration(citylocations):
     # TABU list
     global tabu_list
     global tabu_length
+    global distance
 
     # Create a list of candidates
     candidates = create_candidates(citylocations)
@@ -155,7 +159,7 @@ def tabu_iteration(citylocations):
             break
 
     # Draw's the current path using turtle
-    drawpath(usable_candidate)
+    distance = findDistance(usable_candidate)
 
     # Add current usable candidate to the tabu list
     tabu_list.append(usable_candidate)
@@ -267,6 +271,10 @@ def drawdistance(cities):
         best_distance = distance
     turtle.write(f'Best Distance: {best_distance}', move=False,
                  align='left', font=('Arial', 8, 'normal'))
+
+def findDistance(cities):
+    distance = objective_function(cities)
+    return distance
 
 if __name__ == '__main__':
     main()
