@@ -48,55 +48,6 @@ def main():
 
     #screen.exitonclick()
 
-'''
-def get_arguments():
-    global number_cities
-    global number_iterations
-    global rng_seed
-
-    # If no command line arguments supplied then
-    # default and return function
-    if len(sys.argv) == 1:
-        print(f"Usage: {sys.argv[0]} <number of cities> <number of "
-              "iterations> <rng seed>")
-        print(f"Defaulting to:\nnumber of cities={number_cities},"
-              f"\nnumber of iterations={number_iterations},"
-              f"\nrng seed={rng_seed}")
-        return
-
-    # If they have been supplied but cause an error
-    # (are incorrect) print help and exit
-    try:
-        number_cities = int(sys.argv[1])
-        number_iterations = int(sys.argv[2])
-        rng_seed = int(sys.argv[3])
-    except:
-        try:
-            number_cities = int(sys.argv[1])
-            number_iterations = int(sys.argv[2])
-        except:
-            raise SystemExit(f"Usage: {sys.argv[0]}"
-                             "<number of cities> <number of iterations>"
-                             "<rng seed (optional)>")
-
-
-def gd_iteration(citylocations):
-    # Create a list of candidates
-    candidates = create_candidates(citylocations)
-
-    # Get a sorted list of candidates
-    # lowest (i.e. best) first
-    scored_candidates = sorted(candidates, key=objective_function)
-
-    # The best scored candidate is our choice
-    best_candidate = scored_candidates[0]
-
-    # Draw its path, and return it
-    drawpath(best_candidate)
-    return best_candidate
-'''
-
-
 def get_arguments():
     global number_cities
     global number_iterations
@@ -201,6 +152,7 @@ def objective_function(candidate):
     return sum
 
 def euclidean_distance(pointa, pointb):
+    print(pointa, pointb)
     return math.sqrt(
         math.pow(pointa[0] - pointb[0], 2) + 
         math.pow(pointa[1] - pointb[1], 2))
