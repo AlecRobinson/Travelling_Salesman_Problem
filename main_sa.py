@@ -246,8 +246,8 @@ def main():
     global best_routefinal
     global iterations
     convergence_time = []
-    for i in range(0, iterations):     
-        i = i + 1
+    for i in range(0, 1):     
+        i =  i + 1
         print(i)
         start = time.time()
 
@@ -266,6 +266,9 @@ def main():
 
 def annealing(initial_cities):
     """Peforms simulated annealing to find a solution"""
+    best_routedis = 0
+    best_route = []
+
     initial_temp = 5000
    
     alpha = 0.9
@@ -279,12 +282,16 @@ def annealing(initial_cities):
     
     while same_solution < 2 and same_cost_diff < 5:
         altered_route = get_neighbors(solution_cities)
+        print("Got Neighbours")
         # Check if neighbor is best so far
         cost_diff = get_cost(altered_route) - get_cost(solution_cities)
-        #print(cost_diff)
+        print("Calculated Difference")
         # if the new solution is better, accept it
         if cost_diff > 0:
             solution_cities = altered_route
+            #Setting best routes
+            best_routedis = 1/get_cost(altered_route)
+            best_route = altered_route
             same_solution = 0
             same_cost_diff = 0
             
@@ -303,10 +310,9 @@ def annealing(initial_cities):
                 same_cost_diff+=1
         # decrement the temperature
         current_temp = current_temp*alpha
-        #print(1/get_cost(solution_cities), same_solution)
-    #print(1/get_cost(solution_cities))
+        print(1/get_cost(solution_cities), same_solution)
     
-    return solution_cities, 1/get_cost(solution_cities)
+    return (best_route, best_routedis)
 
 def get_cost(state):
     """Calculates cost/fitness for the solution/route."""

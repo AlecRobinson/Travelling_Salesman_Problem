@@ -152,7 +152,6 @@ def objective_function(candidate):
     return sum
 
 def euclidean_distance(pointa, pointb):
-    print(pointa, pointb)
     return math.sqrt(
         math.pow(pointa[0] - pointb[0], 2) + 
         math.pow(pointa[1] - pointb[1], 2))
