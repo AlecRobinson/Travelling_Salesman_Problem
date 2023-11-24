@@ -10,7 +10,7 @@ data = pd.read_csv("cities.csv", usecols=[1,2] ,header=None, skiprows=1)
 best_route = data.iloc[:5000].to_numpy()
 
 best_dis = sys.maxsize
-iterations = 2
+iterations = 100
 
 print(best_route)
 def main():
@@ -25,7 +25,6 @@ def main():
 
         route, route_distance = annealing(best_route)
 
-        print(route)
         if(route_distance < best_dis):
             best_dis = route_distance
             best_route = route 
@@ -34,9 +33,7 @@ def main():
         convergence_time = convergence_time + time_elapsed
         print(time_elapsed)
 
-
     route, route_distance = finishing_annealing(best_route)
-    print(route)
     if(route_distance < best_dis):
          best_dis = route_distance
          best_route = route 
@@ -47,9 +44,8 @@ def main():
 
 def annealing(initial_cities):
     """Peforms simulated annealing to find a solution"""
-    best_routedis = 0
-    best_route = np.empty((5000, 2))
-   
+    ann_best_routedis = best_dis
+    ann_best_route = initial_cities
     initial_temp = 10000
     alpha = 0.99
     
@@ -70,8 +66,10 @@ def annealing(initial_cities):
         if cost_diff > 0:
             solution_cities = altered_route
             #Setting best routes
-            best_routedis = 1/get_cost(altered_route)
-            best_route = altered_route
+            if(1/get_cost(altered_route) < ann_best_routedis):
+                ann_best_routedis = 1/get_cost(altered_route)
+                ann_best_route = altered_route
+            
             same_solution = 0
             same_cost_diff = 0
             
@@ -92,18 +90,18 @@ def annealing(initial_cities):
         current_temp = current_temp*alpha
         print(1/get_cost(solution_cities), numberOfRepetions)
     
-    return (best_route, best_routedis)
+    return (ann_best_route, ann_best_routedis)
 
 def finishing_annealing(best_route):
 
-    best_routedis = 0
-    best_route = np.empty((5000, 2))
+    ann_best_routedis = 0
+    ann_best_route = best_route
 
     # Start by initializing the current list with the initial list
     solution_cities = best_route
     numberOfRepetions = 0
     
-    while numberOfRepetions < 1000:
+    while numberOfRepetions < 100:
         numberOfRepetions = numberOfRepetions + 1
         altered_route = get_neighbors(solution_cities)
         # Check if neighbor is best so far
@@ -112,12 +110,13 @@ def finishing_annealing(best_route):
         if cost_diff > 0:
             solution_cities = altered_route
             #Setting best routes
-            best_routedis = 1/get_cost(altered_route)
-            best_route = altered_route
+            if(1/get_cost(altered_route) < ann_best_routedis):
+                ann_best_routedis = 1/get_cost(altered_route)
+                ann_best_route = altered_route
             
         print(1/get_cost(solution_cities), numberOfRepetions)
     
-    return (best_route, best_routedis)
+    return (ann_best_route, ann_best_routedis)
 
 def get_cost(state):
     """Calculates cost/fitness for the solution/route."""
@@ -142,7 +141,7 @@ def get_neighbors(state):
 
     neighbor = copy.deepcopy(state)
 
-    func = random.choice([1,2])  #Need to add 0 and 3 once working
+    func = random.choice([0,1,2])  #Need to add 0 and 3 once working
     if func == 0:
         inverse(neighbor)
         
