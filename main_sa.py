@@ -6,44 +6,53 @@ import sys
 import pandas as pd 
 import numpy as np
 
+#Read Data From CSV File
 data = pd.read_csv("cities.csv", usecols=[1,2] ,header=None, skiprows=1)
-best_route = data.iloc[:5000].to_numpy()
 
+#Create Global Variables
+best_route = data.iloc[:5000].to_numpy()
 best_dis = sys.maxsize
 iterations = 100
 
-print(best_route)
+'Main Function'
 def main():
     global best_dis
     global best_route
     global iterations
     convergence_time = 0
+
+    #Looping for number of iterations
     for i in range(0, iterations):     
         i =  i + 1
         print("Iteration Number: " + str(i))
         start = time.time()
 
+        #Performing simulated annealing on the current best route
         route, route_distance = annealing(best_route)
 
+        #Checking if what was found is better than what we currently have
         if(route_distance < best_dis):
             best_dis = route_distance
             best_route = route 
 
+        #Finding time taken to perform iteration and adding it to overall time taken
         time_elapsed = time.time() - start
         convergence_time = convergence_time + time_elapsed
         print(time_elapsed)
 
+    #Once all iteration are done. We perform another final annealing without a fitness to bottom out the data and find best possible route
     route, route_distance = finishing_annealing(best_route)
     if(route_distance < best_dis):
          best_dis = route_distance
          best_route = route 
 
+    #Prining out best answer, route and time elapsed
     print(best_dis)
     print(best_route)
     print(convergence_time)
 
+'Simulated annealing function'
 def annealing(initial_cities):
-    """Peforms simulated annealing to find a solution"""
     ann_best_routedis = best_dis
     ann_best_route = initial_cities
     initial_temp = 10000
