@@ -12,7 +12,7 @@ data = pd.read_csv("cities.csv", usecols=[1,2] ,header=None, skiprows=1)
 #Create Global Variables
 best_route = data.iloc[:5000].to_numpy()
 best_dis = sys.maxsize
-iterations = 100
+iterations = 5
 
 'Main Function'
 def main():
@@ -40,17 +40,10 @@ def main():
         convergence_time = convergence_time + time_elapsed
         print(time_elapsed)
 
-    #Once all iteration are done. We perform another final annealing without a fitness to bottom out the data and find best possible route
-    route, route_distance = finishing_annealing(best_route)
-    if(route_distance < best_dis):
-         best_dis = route_distance
-         best_route = route 
-
     #Prining out best answer, route and time elapsed
     print(best_dis)
     print(best_route)
     print(convergence_time)
-
 'Simulated annealing function'
 def annealing(initial_cities):
     ann_best_routedis = best_dis
@@ -100,33 +93,6 @@ def annealing(initial_cities):
         print(1/get_cost(solution_cities), numberOfRepetions)
     
     return (ann_best_route, ann_best_routedis)
-
-def finishing_annealing(best_route):
-
-    ann_best_routedis = 0
-    ann_best_route = best_route
-
-    # Start by initializing the current list with the initial list
-    solution_cities = best_route
-    numberOfRepetions = 0
-    
-    while numberOfRepetions < 100:
-        numberOfRepetions = numberOfRepetions + 1
-        altered_route = get_neighbors(solution_cities)
-        # Check if neighbor is best so far
-        cost_diff = get_cost(altered_route) - get_cost(solution_cities)
-        # if the new solution is better, accept it
-        if cost_diff > 0:
-            solution_cities = altered_route
-            #Setting best routes
-            if(1/get_cost(altered_route) < ann_best_routedis):
-                ann_best_routedis = 1/get_cost(altered_route)
-                ann_best_route = altered_route
-            
-        print(1/get_cost(solution_cities), numberOfRepetions)
-    
-    return (ann_best_route, ann_best_routedis)
-
 def get_cost(state):
     """Calculates cost/fitness for the solution/route."""
     distance = 0
@@ -141,64 +107,18 @@ def get_cost(state):
         distance += euclidean_distance(from_city, to_city)
     fitness = 1/float(distance)
     return fitness
-
 def euclidean_distance(pointa, pointb):
     return math.sqrt(math.pow(pointa[0] - pointb[0], 2) + math.pow(pointa[1] - pointb[1], 2))
-
 def get_neighbors(state):
     """Returns neighbor of  your solution."""
 
     neighbor = copy.deepcopy(state)
 
-    func = random.choice([0,1,2,3])
-    if func == 0:
-        altered_state = inverse(neighbor)
-        
-    elif func == 1:
-        altered_state = insert(neighbor)
-        
-    elif func == 2 :
-        altered_state = swap(neighbor)
-    
-    else:
-        altered_state = swap_routes(neighbor)
+    altered_state = swap_routes(neighbor)
         
     return altered_state 
 
-def inverse(state):
-    "Inverses the order of cities in a route between node one and node two"
-    index_j = random.choice(range(len(state)))  #Selects random index
-    index_i = random.choice(range(len(state)))  #Finding new index point
 
-    while(index_i == index_j):                     #Checks they are not the same point
-        index_i = random.choice(range(len(state)))
-
-    state[min(index_j,index_i):max(index_j,index_i)] = state[min(index_j,index_i):max(index_j,index_i)][::-1]
-
-    return state
-
-def insert(state):
-    "Insert city at node j before node i"
-    index_j = random.choice(range(len(state)))  #Selects random index
-    index_i = random.choice(range(len(state)))  #Finding new index point
-
-    while(index_i == index_j):                     #Checks they are not the same point
-        index_i = random.choice(range(len(state)))
-    
-    del_state = np.delete(state, index_j ,0)
-    state = np.insert(del_state, index_i - 1, state[index_j], 0)    #Repositioning values
-    return state
-
-def swap(state):
-    "Swaps two random cities with each other"
-    pos_one = random.choice(range(len(state)))  #Selects random index
-    pos_two = random.choice(range(len(state)))  #Finding new index point
-    
-    while(pos_two == pos_one):                     #Checks they are not the same point
-        pos_two = random.choice(range(len(state)))
-    
-    state[[pos_one, pos_two]] = state[[pos_two, pos_one]] #Switching values
-    return state
 
 def swap_routes(state):
     "Select a subroute from a to b and insert it at another position in the route"
@@ -206,16 +126,22 @@ def swap_routes(state):
     subroute_b = random.choice(range(len(state)))
     subroute = state[min(subroute_a,subroute_b):max(subroute_a, subroute_b)]
 
+    print(state)
+
     if(subroute_a > subroute_b):
         del_state = np.delete(state, slice(subroute_b,subroute_a),0)
     else:
         del_state = np.delete(state, slice(subroute_a,subroute_b),0)
     
+    print(del_state)
+
     insert_pos = random.choice(range(len(state)))
     while(insert_pos + len(subroute) > len(state)):
         insert_pos = random.choice(range(len(state)))
-    
+
     state = np.insert(del_state, insert_pos, subroute,0)
+    print(state)
+
     return state
 
 if __name__ == '__main__':
